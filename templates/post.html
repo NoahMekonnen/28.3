@@ -1,0 +1,24 @@
+{% extends 'base.html' %}
+
+{% block title %}{{post.user.first_name}} {{post.user.last_name}} Details{% endblock %}
+
+{% block content %}
+
+<h1>{{post.title}}</h1>
+<p>{{post.content}}</p>
+
+<i>By {{post.user.first_name}} {{post.user.last_name}}</i>
+<h4>Tags:</h4>
+{% for tag in post.tags%}
+    <a>tag</a>
+{% endfor %}
+<form action="/users/{{post.user.id}}">
+    <button>Cancel</button>
+</form>
+<form action="/posts/{{post.id}}/edit">
+    <button>Edit</button>
+</form>
+<form action="/posts/{{post.id}}/delete" method="POST">
+    <button>Delete</button>
+</form>
+{% endblock %}
