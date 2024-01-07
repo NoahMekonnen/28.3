@@ -82,17 +82,25 @@ def show_post_form(user_id):
 def make_form(user_id):
     title = request.form['title']
     content = request.form['content']
-    list_of_tags= request.getlist['a_tag']
+    list_of_tags= request.form.getlist('a_tag')
 
     new_post = Post(title = title, content=content, user_id=user_id)
     db.session.add(new_post)
     db.session.commit()
 
-    for tag in list_of_tags:
-        some_tag = Tag.query.filter_by(name=tag)
-        new_post_tag = PostTag(post_id=new_post.id,tag_id=some_tag.id)
-        db.session.add(new_post_tag)
-        db.session.commit()
+    tags = Tag.query.all()
+    print(list_of_tags,"This is the list of TAGS!!!!!!!!!!!!!!")
+    for num in range(len(list_of_tags)):
+        if list_of_tags[num] == 'on':
+            tag = tags[num]
+            new_post_tag = PostTag(post_id=new_post.id,tag_id=tag.id)
+            db.session.add(new_post_tag)
+            db.session.commit()
+        else:
+            tag = tags[num]
+            post_tag = PostTag.query.filter((PostTag.post_id==new_post.id)&(PostTag.tag_id==tag.id)).all()
+            post_tag.delete()
+            db.session.commit()
 
     return redirect(f'/users/{user_id}')
 
@@ -119,13 +127,23 @@ def edit_post(post_id):
     db.session.add(post)
     db.session.commit()
 
-    list_of_tags= request.getlist['a_tag']
+    list_of_tags= request.form.getlist('a_tag')
 
-    for tag in list_of_tags:
-        some_tag = Tag.query.filter_by(name=tag)
-        new_post_tag = PostTag(post_id=post.id,tag_id=some_tag.id)
-        db.session.add(new_post_tag)
-        db.session.commit()
+    tags = Tag.query.all()
+    for num in range(len(list_of_tags)):
+        if list_of_tags[num] == 'on':
+            tag = tags[num]
+            post_tag = PostTag.query.filter((PostTag.post_id==post.id)&(PostTag.tag_id==tag.id)).all()
+            if not post_tag:
+                new_post_tag = PostTag(post_id=post.id,tag_id=tag.id)
+                db.session.add(new_post_tag)
+                db.session.commit()
+        else:
+            tag = tags[num]
+            post_tag = PostTag.query.filter((PostTag.post_id==post.id)&(PostTag.tag_id==tag.id)).all()
+            if post_tag:
+                post_tag.delete()
+                db.session.commit()
     return redirect(f'/posts/{post_id}')
 
 @app.route('/posts/<int:post_id>/delete', methods = ['POST'])
@@ -169,7 +187,7 @@ def edit_tag(tag_id):
     tag = Tag.query.get(tag_id)
     if request.form['name']:
         name = request.form['name']
-        tag_id.name = name
+        tag.name = name
         db.session.add(tag)
         db.session.commit()
     return redirect('/tags')

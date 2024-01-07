@@ -6,7 +6,7 @@
 <h1>Tags</h1>
 <ul>
 {% for tag in tags %} 
-<li><a href="/tags/{{tag.id}}">{{user.first_name}} {{user.last_name}}</a></li>
+<li><a href="/tags/{{tag.id}}">{{tag.name}}</a></li>
 {% endfor %}
 </ul>
 <form action="/tags/new">

@@ -3,13 +3,16 @@
 {% block title %} All Tags {% endblock %}
 
 {% block content %}
-<h1>Tags</h1>
+<h1>{{tag.name}}</h1>
 <ul>
-{% for tag in tags %} 
-<li><a href="/tags/{{tag.id}}">{{user.first_name}} {{user.last_name}}</a></li>
+{% for post in tag.posts %} 
+<li><a href="/posts/{{post.id}}">{{post.title}}</a></li>
 {% endfor %}
 </ul>
-<form action="/tags/new">
-<button>Add Tag</button>
+<form action="/tags/{{tag.id}}/edit">
+    <button>Edit</button>
+</form>
+<form action="/tags/{{tag.id}}/delete">
+<button>Delete</button>
 </form>
 {% endblock %}

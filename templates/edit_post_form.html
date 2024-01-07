@@ -13,7 +13,7 @@
     <button>Edit</button>
     {% for tag in tags%}
     <input type="checkbox" id="a_tag" name="a_tag">
-    <label for="a_tag">{{tag}}</label>
+    <label for="a_tag">{{tag.name}}</label>
     {% endfor %}
 </form>
 <form action="/users/{{post.user.id}}">
