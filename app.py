@@ -90,17 +90,12 @@ def make_form(user_id):
 
     tags = Tag.query.all()
     print(list_of_tags,"This is the list of TAGS!!!!!!!!!!!!!!")
-    for num in range(len(list_of_tags)):
-        if list_of_tags[num] == 'on':
-            tag = tags[num]
-            new_post_tag = PostTag(post_id=new_post.id,tag_id=tag.id)
-            db.session.add(new_post_tag)
-            db.session.commit()
-        else:
-            tag = tags[num]
-            post_tag = PostTag.query.filter((PostTag.post_id==new_post.id)&(PostTag.tag_id==tag.id)).all()
-            post_tag.delete()
-            db.session.commit()
+    for tag_name in list_of_tags:
+        tag = Tag.query.filter_by(name=tag_name).first()
+        new_post_tag = PostTag(post_id=new_post.id,tag_id=tag.id)
+        db.session.add(new_post_tag)
+        db.session.commit()
+
 
     return redirect(f'/users/{user_id}')
 
@@ -130,19 +125,18 @@ def edit_post(post_id):
     list_of_tags= request.form.getlist('a_tag')
 
     tags = Tag.query.all()
-    for num in range(len(list_of_tags)):
-        if list_of_tags[num] == 'on':
-            tag = tags[num]
-            post_tag = PostTag.query.filter((PostTag.post_id==post.id)&(PostTag.tag_id==tag.id)).all()
-            if not post_tag:
-                new_post_tag = PostTag(post_id=post.id,tag_id=tag.id)
-                db.session.add(new_post_tag)
-                db.session.commit()
-        else:
-            tag = tags[num]
-            post_tag = PostTag.query.filter((PostTag.post_id==post.id)&(PostTag.tag_id==tag.id)).all()
+    for tag_name in list_of_tags:
+        tag = Tag.query.filter_by(name=tag_name).first()
+        if not PostTag.query.filter((PostTag.post_id==post.id)&(PostTag.tag_id==tag.id)).first():
+            new_post_tag = PostTag(post_id=post.id,tag_id=tag.id)
+            db.session.add(new_post_tag)
+            db.session.commit()
+
+    for tag in tags:
+        if tag.name not in list_of_tags:
+            post_tag = PostTag.query.filter((PostTag.post_id==post.id)&(PostTag.tag_id==tag.id)).first()
             if post_tag:
-                post_tag.delete()
+                PostTag.query.filter((PostTag.post_id==post.id)&(PostTag.tag_id==tag.id)).delete()
                 db.session.commit()
     return redirect(f'/posts/{post_id}')
 

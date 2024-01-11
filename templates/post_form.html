@@ -12,7 +12,7 @@
     <input id="content"type="text" name="content">
     <button>Add</button>
     {% for tag in tags%}
-    <input type="checkbox" id="a_tag" name="a_tag">
+    <input type="checkbox" id="a_tag" name="a_tag" value="{{tag.name}}">
     <label for="a_tag">{{tag.name}}</label>
     {% endfor %}
 </form>
